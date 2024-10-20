@@ -7,13 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * Controlador, funciones a usardesde clientes
- * conección con la bbdd
- */
-
 @RestController
 @RequestMapping("/clientes")
+@CrossOrigin(origins = "http://localhost:5173")
 public class ClienteController {
 
     @Autowired
@@ -23,6 +19,7 @@ public class ClienteController {
     public List<Cliente> listarClientes() {
         return clienteService.obtenerClientes();
     }
+
 
     @PostMapping
     public Cliente guardarCliente(@RequestBody Cliente cliente) {
