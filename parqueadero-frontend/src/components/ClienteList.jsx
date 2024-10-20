@@ -4,6 +4,7 @@ import ClienteForm from './ClienteForm';
 
 const ClienteList = () => {
     const [clientes, setClientes] = useState([]);
+    const [clienteEditando, setClienteEditando] = useState(null);
 
     const cargarClientes = async () => {
         try {
@@ -11,6 +12,19 @@ const ClienteList = () => {
             setClientes(response.data);
         } catch (error) {
             console.error('Error al obtener los clientes:', error);
+        }
+    };
+
+    const handleEditarCliente = (cliente) => {
+        setClienteEditando(cliente);
+    };
+
+    const handleEliminarCliente = async (id) => {
+        try {
+            await ClienteService.eliminarCliente(id);
+            cargarClientes(); // Recargar la lista después de eliminar
+        } catch (error) {
+            console.error('Error al eliminar el cliente:', error);
         }
     };
 
@@ -22,13 +36,19 @@ const ClienteList = () => {
         <div>
             <h1>Lista de Clientes</h1>
 
-            {/* Formulario para agregar nuevo cliente */}
-            <ClienteForm onClienteAdded={cargarClientes} />
+            {/* Formulario para agregar o editar cliente */}
+            <ClienteForm
+                onClienteAdded={cargarClientes}
+                clienteEditando={clienteEditando}
+                onClienteUpdated={cargarClientes}
+            />
 
             <ul>
                 {clientes.map((cliente) => (
                     <li key={cliente.id}>
                         {cliente.nombre} - {cliente.email} - {cliente.telefono}
+                        <button onClick={() => handleEditarCliente(cliente)}>Editar</button>
+                        <button onClick={() => handleEliminarCliente(cliente.id)}>Eliminar</button>
                     </li>
                 ))}
             </ul>

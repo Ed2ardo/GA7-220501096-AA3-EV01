@@ -1,25 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ClienteService from '../services/ClienteService';
 
-const ClienteForm = ({ onClienteAdded }) => {
+const ClienteForm = ({ onClienteAdded, clienteEditando, onClienteUpdated }) => {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [telefono, setTelefono] = useState('');
 
-    const handleSubmit = async (e) => {
-        e.preventDefault(); // Previene el comportamiento predeterminado de recargar la página
-
-        const nuevoCliente = { nombre, email, telefono };
-
-        try {
-            await ClienteService.agregarCliente(nuevoCliente); // Llamada al backend para agregar cliente
-            onClienteAdded(); // Refresca la lista de clientes
-            // Limpia los campos del formulario
+    useEffect(() => {
+        if (clienteEditando) {
+            // Si hay un cliente en edición, llena los campos con sus datos
+            setNombre(clienteEditando.nombre);
+            setEmail(clienteEditando.email);
+            setTelefono(clienteEditando.telefono);
+        } else {
+            // Si no hay cliente en edición, limpia los campos
             setNombre('');
             setEmail('');
             setTelefono('');
+        }
+    }, [clienteEditando]);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const cliente = { nombre, email, telefono };
+
+        try {
+            if (clienteEditando) {
+                // Actualizar cliente existente
+                await ClienteService.actualizarCliente(clienteEditando.id, cliente);
+                onClienteUpdated(); // Actualiza la lista tras editar
+            } else {
+                // Agregar nuevo cliente
+                await ClienteService.agregarCliente(cliente);
+                onClienteAdded(); // Actualiza la lista tras agregar
+            }
         } catch (error) {
-            console.error('Error al agregar cliente:', error);
+            console.error('Error al guardar cliente:', error);
         }
     };
 
@@ -31,6 +48,7 @@ const ClienteForm = ({ onClienteAdded }) => {
                     type="text"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
+                    required
                 />
             </div>
             <div>
@@ -39,6 +57,7 @@ const ClienteForm = ({ onClienteAdded }) => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    required
                 />
             </div>
             <div>
@@ -47,9 +66,12 @@ const ClienteForm = ({ onClienteAdded }) => {
                     type="text"
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
+                    required
                 />
             </div>
-            <button type="submit">Agregar Cliente</button>
+            <button type="submit">
+                {clienteEditando ? 'Actualizar Cliente' : 'Agregar Cliente'}
+            </button>
         </form>
     );
 };
