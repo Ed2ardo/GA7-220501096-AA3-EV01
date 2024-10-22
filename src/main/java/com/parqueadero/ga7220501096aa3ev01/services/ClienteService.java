@@ -34,4 +34,8 @@ public class ClienteService {
         Optional<Cliente> cliente = clienteRepository.findById(id);
         return cliente.orElse(null);  // Si no se encuentra, retorna null
     }
+
+
 }
+
+

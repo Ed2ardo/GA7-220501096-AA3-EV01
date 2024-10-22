@@ -8,15 +8,9 @@ const ClienteForm = ({ onClienteAdded, clienteEditando, onClienteUpdated }) => {
 
     useEffect(() => {
         if (clienteEditando) {
-            // Si hay un cliente en edición, llena los campos con sus datos
             setNombre(clienteEditando.nombre);
             setEmail(clienteEditando.email);
             setTelefono(clienteEditando.telefono);
-        } else {
-            // Si no hay cliente en edición, limpia los campos
-            setNombre('');
-            setEmail('');
-            setTelefono('');
         }
     }, [clienteEditando]);
 
@@ -27,49 +21,54 @@ const ClienteForm = ({ onClienteAdded, clienteEditando, onClienteUpdated }) => {
 
         try {
             if (clienteEditando) {
-                // Actualizar cliente existente
                 await ClienteService.actualizarCliente(clienteEditando.id, cliente);
-                onClienteUpdated(); // Actualiza la lista tras editar
+                onClienteUpdated();
             } else {
-                // Agregar nuevo cliente
                 await ClienteService.agregarCliente(cliente);
-                onClienteAdded(); // Actualiza la lista tras agregar
+                onClienteAdded();
             }
+
+            setNombre('');
+            setEmail('');
+            setTelefono('');
         } catch (error) {
             console.error('Error al guardar cliente:', error);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div>
+        <form className="cliente-form" onSubmit={handleSubmit}>
+            <div className="form-group">
                 <label>Nombre:</label>
                 <input
                     type="text"
+                    className="form-control"
                     value={nombre}
                     onChange={(e) => setNombre(e.target.value)}
                     required
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>Email:</label>
                 <input
                     type="email"
+                    className="form-control"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                 />
             </div>
-            <div>
+            <div className="form-group">
                 <label>Teléfono:</label>
                 <input
                     type="text"
+                    className="form-control"
                     value={telefono}
                     onChange={(e) => setTelefono(e.target.value)}
                     required
                 />
             </div>
-            <button type="submit">
+            <button type="submit" className="btn-submit">
                 {clienteEditando ? 'Actualizar Cliente' : 'Agregar Cliente'}
             </button>
         </form>

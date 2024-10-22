@@ -22,7 +22,7 @@ const ClienteList = () => {
     const handleEliminarCliente = async (id) => {
         try {
             await ClienteService.eliminarCliente(id);
-            cargarClientes(); // Recargar la lista después de eliminar
+            cargarClientes();
         } catch (error) {
             console.error('Error al eliminar el cliente:', error);
         }
@@ -33,26 +33,46 @@ const ClienteList = () => {
     }, []);
 
     return (
-        <div>
-            <h1>Lista de Clientes</h1>
+        <>
+            <header>
+                <h1>Gestión de Parqueaderos</h1>
+            </header>
 
-            {/* Formulario para agregar o editar cliente */}
-            <ClienteForm
-                onClienteAdded={cargarClientes}
-                clienteEditando={clienteEditando}
-                onClienteUpdated={cargarClientes}
-            />
+            <div className="sidebar">
+                <a href="#">Registros</a>
+                <a href="#">Estadísticas</a>
+                <a href="#">Reportes</a>
+                <a href="#">Cuenta</a>
+            </div>
 
-            <ul>
-                {clientes.map((cliente) => (
-                    <li key={cliente.id}>
-                        {cliente.nombre} - {cliente.email} - {cliente.telefono}
-                        <button onClick={() => handleEditarCliente(cliente)}>Editar</button>
-                        <button onClick={() => handleEliminarCliente(cliente.id)}>Eliminar</button>
-                    </li>
-                ))}
-            </ul>
-        </div>
+            <div className="container">
+                <div className="cliente-container">
+                    <h2>Clientes</h2>
+
+                    <ClienteForm
+                        onClienteAdded={cargarClientes}
+                        clienteEditando={clienteEditando}
+                        onClienteUpdated={cargarClientes}
+                    />
+
+                    <div className="cliente-list">
+                        {clientes.map((cliente) => (
+                            <div key={cliente.id} className="cliente-card">
+                                <span>{cliente.nombre} - {cliente.email} - {cliente.telefono}</span>
+                                <div className="action-buttons">
+                                    <button className="edit" onClick={() => handleEditarCliente(cliente)}>Editar</button>
+                                    <button className="delete" onClick={() => handleEliminarCliente(cliente.id)}>Eliminar</button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            <footer>
+                <p>Gestión de Parqueaderos &copy; 2024</p>
+            </footer>
+        </>
     );
 };
 

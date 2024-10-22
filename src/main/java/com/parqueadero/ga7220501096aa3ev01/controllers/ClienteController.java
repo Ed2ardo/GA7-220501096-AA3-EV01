@@ -35,4 +35,16 @@ public class ClienteController {
     public Cliente obtenerClientePorId(@PathVariable Long id) {
         return clienteService.obtenerClientePorId(id);
     }
+
+    @PutMapping("/{id}")
+    public Cliente actualizarCliente(@PathVariable Long id, @RequestBody Cliente clienteActualizado) {
+        Cliente cliente = clienteService.obtenerClientePorId(id);
+        if (cliente != null) {
+            cliente.setNombre(clienteActualizado.getNombre());
+            cliente.setEmail(clienteActualizado.getEmail());
+            cliente.setTelefono(clienteActualizado.getTelefono());
+            return clienteService.guardarCliente(cliente);
+        }
+        return null; // Manejo de error adecuado si el cliente no existe
+    }
 }
