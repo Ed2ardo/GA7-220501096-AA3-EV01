@@ -28,6 +28,11 @@ const ClienteList = () => {
         }
     };
 
+    // Función para limpiar el cliente en edición
+    const limpiarClienteEditando = () => {
+        setClienteEditando(null);
+    };
+
     useEffect(() => {
         cargarClientes();
     }, []);
@@ -53,6 +58,7 @@ const ClienteList = () => {
                         onClienteAdded={cargarClientes}
                         clienteEditando={clienteEditando}
                         onClienteUpdated={cargarClientes}
+                        limpiarClienteEditando={limpiarClienteEditando}
                     />
 
                     <div className="cliente-list">

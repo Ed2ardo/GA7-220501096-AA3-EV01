@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ClienteService from '../services/ClienteService';
 
-const ClienteForm = ({ onClienteAdded, clienteEditando, onClienteUpdated }) => {
+const ClienteForm = ({ onClienteAdded, clienteEditando, onClienteUpdated, limpiarClienteEditando }) => {
     const [nombre, setNombre] = useState('');
     const [email, setEmail] = useState('');
     const [telefono, setTelefono] = useState('');
@@ -11,6 +11,10 @@ const ClienteForm = ({ onClienteAdded, clienteEditando, onClienteUpdated }) => {
             setNombre(clienteEditando.nombre);
             setEmail(clienteEditando.email);
             setTelefono(clienteEditando.telefono);
+        } else {
+            setNombre(''); // Limpiar el formulario si no hay cliente para editar
+            setEmail('');
+            setTelefono('');
         }
     }, [clienteEditando]);
 
@@ -22,10 +26,11 @@ const ClienteForm = ({ onClienteAdded, clienteEditando, onClienteUpdated }) => {
         try {
             if (clienteEditando) {
                 await ClienteService.actualizarCliente(clienteEditando.id, cliente);
-                onClienteUpdated();
+                onClienteUpdated(); // Llama a la función de actualización
+                limpiarClienteEditando(); // Restablecer el clienteEditando a null
             } else {
                 await ClienteService.agregarCliente(cliente);
-                onClienteAdded();
+                onClienteAdded(); // Llama a la función de agregado
             }
 
             setNombre('');
